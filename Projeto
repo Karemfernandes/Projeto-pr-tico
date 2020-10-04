@@ -1,0 +1,189 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+class endereco
+{
+private:
+    string cep;
+    string rua;
+    string numero;
+    string cidade;
+
+public:
+    endereco()
+    {
+    }
+
+    endereco(string cp, string ru, string num, string cid)
+    {
+        cep = cp;
+        rua = ru;
+        numero = num;
+        cidade = cid;
+    }
+
+    void imprime()
+    {
+        cout << "CEP " << cep << "\n";
+        cout << "Cidade: " << cidade << "\n";
+        cout << "Endereco: " << rua << " " << numero << "\n";
+    }
+};
+
+class encomenda
+{
+private:
+    string nomeRemetente;
+    endereco enderecoRemetente;
+    string nomeDestinario;
+    endereco enderecoDestinatario;
+
+public:
+    encomenda()
+    {
+    }
+
+    encomenda(string rem, endereco endrem, string dest, endereco enddest)
+    {
+        nomeRemetente = rem;
+        nomeDestinario = dest;
+        enderecoRemetente = endrem;
+        enderecoDestinatario = enddest;
+    }
+    void imprime()
+    {
+        cout << "Remetente\n";
+        cout << "nome: " << nomeRemetente << "\n";
+        enderecoRemetente.imprime();
+        cout << "DestinatÃ¡rio\n";
+        cout << "nome: " << nomeDestinario << "\n";
+        enderecoDestinatario.imprime();
+        cout << "\n";
+    }
+};
+
+endereco cadastraEndereco()
+{
+    string cep;
+    string rua;
+    string numero;
+    string cidade;
+
+    cout << "Digite o cep: ";
+    cin >> cep;
+    cout << "Digite a rua: ";
+    cin >> rua;
+    cout << "Digite o numero: ";
+    cin >> numero;
+    cout << "Digite a cidade: ";
+    cin >> cidade;
+
+    return endereco(cep, rua, numero, cidade);
+}
+
+void cadastraEncomenda(queue<encomenda> &encomendas)
+{
+    string nomeRemetente;
+    endereco enderecoRemetente;
+    string nomeDestinatario;
+    endereco enderecoDestinatario;
+    encomenda novaencomenda;
+
+    cout << "Digite o nome do Remetente: ";
+    cin >> nomeRemetente;
+    enderecoRemetente = cadastraEndereco();
+    cout << "\nDigite o nome do Destinatario: ";
+    cin >> nomeDestinatario;
+    enderecoDestinatario = cadastraEndereco();
+
+    novaencomenda = encomenda(nomeRemetente, enderecoRemetente, nomeDestinatario, enderecoDestinatario);
+
+    encomendas.push(novaencomenda);
+}
+
+void despachaEncomenda(queue<encomenda> &encomenda)
+{
+    encomenda.pop();
+    cout << "Encomenda Enviada... Aguarde o recebimento."
+         << "\n\n";
+}
+
+void imprimir(queue<encomenda> encomenda)
+{
+    while (encomenda.size() > 0)
+    {
+        encomenda.front().imprime();
+        encomenda.pop();
+    }
+}
+
+int main()
+{
+    int opcao;
+    int opcao2;
+
+    queue<encomenda> encomendaPac;
+    queue<encomenda> encomendaSedex;
+    do
+    {
+        cout << "\t\tCorreios\n\n";
+        cout << "1 - Cadastrar encomenda\n";
+        cout << "2 - Efetuar entrega\n";
+        cout << "3 - Imprimir\n";
+        cout << "0 - Sair\n";
+        cin >> opcao;
+
+        switch (opcao)
+        {
+        case 1:
+            cout << "\n\t\tCadastro\n\n";
+            cout << "1 - Pac\n";
+            cout << "2 - Sedex\n";
+            cin >> opcao2;
+            if (opcao2 == 1)
+            {
+                cadastraEncomenda(encomendaPac);
+            }
+            else
+            {
+                cadastraEncomenda(encomendaSedex);
+            }
+
+            break;
+        case 2:
+            cout << "\n\t\tEntrega\n\n";
+            cout << "1 - Pac\n";
+            cout << "2 - Sedex\n";
+            cin >> opcao2;
+            if (opcao2 == 1)
+            {
+                despachaEncomenda(encomendaPac);
+            }
+            else
+            {
+                despachaEncomenda(encomendaSedex);
+            }
+
+            break;
+        case 3:
+            if (encomendaPac.size() > 0)
+            {
+                cout << "\t\tFila Pac\n\n";
+                imprimir(encomendaPac);
+            }
+            if (encomendaSedex.size() > 0)
+            {
+                cout << "\t\tFila Sedex\n\n";
+                imprimir(encomendaSedex);
+            }
+
+            break;
+
+        default:
+            break;
+        }
+
+    } while (opcao != 0);
+}
